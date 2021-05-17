@@ -1,8 +1,6 @@
 Based off this tutorial: https://medium.com/disney-streaming/testing-jenkins-shared-libraries-4d4939406fa2
 
-I have the simplest of hello-world repos to get off the ground, and I can’t get past the first step.
-
-https://github.consilio.com/mcascone/test-jenk-unit
+This is the simplest of hello-world repos to get off the ground, and I can’t get past the first step.
 
 `./gradlew test` should compile and run the test, but I get an ssl error:
 
