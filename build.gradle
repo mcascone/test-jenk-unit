@@ -2,7 +2,7 @@ plugins {
   id "groovy"
 }
 
-//group = "<package>"   // example: com.disney.dss.dpe
+group = "consilio"   // example: com.disney.dss.dpe
 //version = "<version>" // example: 1.0.0
 
 repositories {
@@ -15,3 +15,5 @@ dependencies {
   testCompile "com.lesfurets:jenkins-pipeline-unit:1.1"
   testCompile "junit:junit:4.12"
 }
+
+defaultTasks 'test'
