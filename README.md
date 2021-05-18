@@ -33,7 +33,6 @@ These steps are required to add the new Zscaler root CA cert to the Java keystor
 1. Grab the Root ZScaler cert from a browser:
 
 
-
 2. Execute these commands:
 
    ```powershell
