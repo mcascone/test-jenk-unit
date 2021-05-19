@@ -42,8 +42,8 @@ These steps are required to add the new Zscaler root CA cert to the Java keystor
    ```powershell
    $caargs = @('-importcert',
      '-trustcacerts',
-     '-alias', 'zscaler-rootca-may2021',
-     '-file', 'C:\Users\mcascone1\Desktop\zscaler-rootca-may2021.cer',
+     '-alias', 'pick-a-good-alias',
+     '-file', 'path/to/the/exported.cer',
      '-storepass', 'changeit', 
      '-keystore', '.\cacerts', 
      '-noprompt')
@@ -53,7 +53,7 @@ These steps are required to add the new Zscaler root CA cert to the Java keystor
    ..\..\bin\keytool.exe @caargs
    ```
   
-   > Note the `@` in the last line is not a typo, it is [the `splat` operator](https://docs.microsoft.com/en-us/powershell/module/microsoft.powershell.core/about/about_splatting?view=powershell-7.1) to write the contents of the array as a single line.
+   > Note the `@` in the last line is not a typo, it is [the `splat` operator][8] to write the contents of the array as a single line.
    
 # Getting The Build To Work
 
@@ -173,7 +173,7 @@ BUILD SUCCESSFUL in 5s
   gradle.startParameter.excludedTaskNames += ['compileJava', 'compileTestJava', 'processResources', 'processTestResources']
   ```
 
-  Prove it:
+  Let's prove it:
 
   ```powershell
   > gw test --console verbose
@@ -228,3 +228,4 @@ See [build.gradle](build.gradle) for the complete file.
 [5]: https://github.com/jenkinsci/JenkinsPipelineUnit/issues/51
 [6]: https://en.wikipedia.org/wiki/Dependency_hell
 [7]: https://docs.groovy-lang.org/2.4.7/html/gapi/groovy/util/GroovyTestCase.html
+[8]: https://docs.microsoft.com/en-us/powershell/module/microsoft.powershell.core/about/about_splatting?view=powershell-7.1
