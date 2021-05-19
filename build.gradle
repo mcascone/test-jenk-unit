@@ -42,8 +42,8 @@ test {
   // delete old test reports
   dependsOn cleanTest
 
-  // don't stop if tests fail
-  ignoreFailures = true
+  // fail the run if a test fails
+  ignoreFailures = false
 
   // minimize logging
   testLogging.maxGranularity = 0
@@ -69,3 +69,7 @@ test {
       ", Skipped: ${results.sum { it.skippedTestCount }}" 
   }
 }
+
+gradle.startParameter.excludedTaskNames += ['compileJava', 'compileTestJava', 'processResources', 'processTestResources']
+
+defaultTasks 'test'

@@ -4,9 +4,13 @@ This is the simplest of hello-world repos to get off the ground, and I ~~can’t
 
 ## References
 
-- [Based off this tutorial][1]
-- JPU repo: https://github.com/jenkinsci/JenkinsPipelineUnit
-- Shot in the dark question to them: https://github.com/jenkinsci/JenkinsPipelineUnit/issues/51
+- Based off [this tutorial][1]
+- [Jenkins Pipeline Unit on GitHub][4] and a [shot in the dark question to them][5]
+
+
+## Starting Point
+
+After many false starts, I finally was able to put together this starter repo based on [the tutorial above][1] and give it a try.
 
 `./gradlew test` should compile and run the test, but I get an ssl error:
 
@@ -27,7 +31,7 @@ I get this even when off the VPN. So I figure my java cert chain is out of date.
 # The Answer*
 `*` to the SSL issue, at least
 
-I get the error when off VPN because the Zscaler grabs _all_ traffic from our laptops, regardless of VPN status. IT pushes certs to our Windows cert store in the background, but we're on our own for non-standard runtimes.
+I get the error when off VPN because the corporate Zscaler grabs _all_ traffic from our laptops, regardless of VPN status. IT pushes certs to our Windows cert store in the background, but we're on our own for non-standard runtimes.
 
 These steps are required to add the new Zscaler root CA cert to the Java keystore:
 
@@ -73,7 +77,7 @@ sourceSets {
 ```
 
 
-I fiddled with that, made some progress, but was still getting into dependency hell with the libraries. After a few iterations I landed on this, which combined the info from both walkthroughs:
+I fiddled with that, made some progress, but was still getting into [dependency hell][6] with the libraries. After a few iterations I landed on this, which combined the info from both walkthroughs:
 
 ```gradle
 repositories {
@@ -105,20 +109,122 @@ BUILD SUCCESSFUL in 5s
 
 # Going Deeper
 
-Let's set up some failing tests:
+## Tweaking The Test Command
+
+- First off, I set an alias to speed up the ol' fingers:
+
+  ```powershell
+  > set-alias -name gw -value './gradlew'
+
+  > get-alias gw
+
+  CommandType     Name
+  -----------     ----
+  Alias           gw -> gradlew.bat
+  ```
+
+- `gradlew --help` shows a bunch of options.
+  
+  `--console verbose` provides some interesting details, including several tasks that have no code, and we might as well skip:
+
+  ```shell
+  > gw test --console verbose
+  > Task :compileJava NO-SOURCE
+  > Task :compileGroovy UP-TO-DATE
+  > Task :processResources NO-SOURCE
+  > Task :classes UP-TO-DATE
+  > Task :cleanTest
+  > Task :compileTestJava NO-SOURCE
+  > Task :compileTestGroovy UP-TO-DATE
+  > Task :processTestResources NO-SOURCE
+  > Task :testClasses UP-TO-DATE
+
+  > Task :test
+  ToAlphanumericTest: testCall: SUCCESS
+  Tests: 1, Failures: 0, Errors: 0, Skipped: 0
+
+  BUILD SUCCESSFUL in 5s
+  4 actionable tasks: 2 executed, 2 up-to-date
+  ```
+
+  So we can skip those tasks:
+
+  ```powershell
+  > gw test --console verbose --exclude-task compileJava -x compileTestJava -x processResources -x processTestResources
+  > Task :compileGroovy UP-TO-DATE
+  > Task :classes
+  > Task :cleanTest
+  > Task :compileTestGroovy UP-TO-DATE
+  > Task :testClasses
+
+  > Task :test
+  ToAlphanumericTest: testCall: SUCCESS
+  Tests: 1, Failures: 0, Errors: 0, Skipped: 0
+
+  BUILD SUCCESSFUL in 5s
+  4 actionable tasks: 2 executed, 2 up-to-date  
+  ```
+
+  It doesn't seem to make a difference when there's only one test, but perhaps with a real test suite it would. In any case, I prefer to skip tests that will likely never have any code.
+
+- [I found][3] that you can set that in the `build.gradle`:
+
+  ```gradle
+  gradle.startParameter.excludedTaskNames += ['compileJava', 'compileTestJava', 'processResources', 'processTestResources']
+  ```
+
+  Prove it:
+
+  ```powershell
+  > gw test --console verbose
+  > Task :compileGroovy UP-TO-DATE
+  > Task :classes
+  > Task :cleanTest
+  > Task :compileTestGroovy UP-TO-DATE
+  > Task :testClasses
+
+  > Task :test
+  ToAlphanumericTest: testCall: SUCCESS
+  Tests: 1, Failures: 0, Errors: 0, Skipped: 0
+
+  BUILD SUCCESSFUL in 4s
+  4 actionable tasks: 2 executed, 2 up-to-date
+  ```
+
+- We can also set the default task in the `build.gradle`:
+
+  ```gradle
+  defaultTasks 'test'
+  ```
+
+- Putting it all together, we can now just run `gw` to build and run the tests.
+
+  ```powershell
+  > gw
+
+  > Task :test
+  ToAlphanumericTest: testCall: SUCCESS
+  Tests: 1, Failures: 0, Errors: 0, Skipped: 0
+
+  BUILD SUCCESSFUL in 4s
+  4 actionable tasks: 2 executed, 2 up-to-date
+  ```
+
+See [build.gradle](build.gradle) for the complete file.
 
 
+# Appendix
 
-
-
-
-
-
-
-
+1. The build/test results are output to a file: `path/to/repo/build/reports/tests/test/index.html`
+2. [These old-school `assert` options might come in handy.][7]
 
 
 
 
 [1]: https://medium.com/disney-streaming/testing-jenkins-shared-libraries-4d4939406fa2
 [2]: https://dev.to/kuperadrian/how-to-setup-a-unit-testable-jenkins-shared-pipeline-library-2e62
+[3]: https://stackoverflow.com/questions/46916673/gradle-exclude-multiple-tasks-programmatically
+[4]: https://github.com/jenkinsci/JenkinsPipelineUnit
+[5]: https://github.com/jenkinsci/JenkinsPipelineUnit/issues/51
+[6]: https://en.wikipedia.org/wiki/Dependency_hell
+[7]: https://docs.groovy-lang.org/2.4.7/html/gapi/groovy/util/GroovyTestCase.html
