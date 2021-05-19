@@ -1,6 +1,6 @@
 # jenkins pipeline unit test learning repo
 
-This is the simplest of hello-world repos to get off the ground, and I can’t get past the first step.
+This is the simplest of hello-world repos to get off the ground, and I ~~can’t~~ couldn't get past the first step.
 
 ## References
 
@@ -58,9 +58,6 @@ After getting past the SSL issue, the code I'd copied wholesale from [the tutori
 ```gradle
 sourceSets {
   main {
-    java {
-      srcDirs = []
-    }
     groovy {
       // all code files will be in either of the folders
       srcDirs = ['src', 'vars'] 

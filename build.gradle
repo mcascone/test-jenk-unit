@@ -25,9 +25,6 @@ dependencies {
 
 sourceSets {
   main {
-    java {
-      srcDirs = []
-    }
     groovy {
       // all code files will be in either of the folders
       srcDirs = ['src', 'vars'] 
