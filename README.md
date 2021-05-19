@@ -4,7 +4,7 @@ This is the simplest of hello-world repos to get off the ground, and I can’t g
 
 ## References
 
-- Based off this tutorial: https://medium.com/disney-streaming/testing-jenkins-shared-libraries-4d4939406fa2
+- [Based off this tutorial][1]
 - JPU repo: https://github.com/jenkinsci/JenkinsPipelineUnit
 - Shot in the dark question to them: https://github.com/jenkinsci/JenkinsPipelineUnit/issues/51
 
@@ -24,14 +24,14 @@ nd valid certification path to requested target
 
 I get this even when off the VPN. So I figure my java cert chain is out of date. What’s the best way to fix it?
 
-# The Answer
+# The Answer*
+`*` to the SSL issue, at least
 
-I get the error when off VPN because the Zscaler grabs _all_ traffic from our laptops, regardless of VPN status.
+I get the error when off VPN because the Zscaler grabs _all_ traffic from our laptops, regardless of VPN status. IT pushes certs to our Windows cert store in the background, but we're on our own for non-standard runtimes.
 
 These steps are required to add the new Zscaler root CA cert to the Java keystore:
 
-1. Grab the Root ZScaler cert from a browser:
-
+1. Grab the Root ZScaler cert from a browser.
 
 2. Execute these commands:
 
@@ -51,3 +51,77 @@ These steps are required to add the new Zscaler root CA cert to the Java keystor
   
    > Note the `@` in the last line is not a typo, it is [the `splat` operator](https://docs.microsoft.com/en-us/powershell/module/microsoft.powershell.core/about/about_splatting?view=powershell-7.1) to write the contents of the array as a single line.
    
+# Getting The Build To Work
+
+After getting past the SSL issue, the code I'd copied wholesale from [the tutorial][1] still wouldn't compile, as it's several years old. I had some kind of mental breakthrough and remembered [this other tutorial][2] that talked about how to set up the directories correctly:
+
+```gradle
+sourceSets {
+  main {
+    java {
+      srcDirs = []
+    }
+    groovy {
+      // all code files will be in either of the folders
+      srcDirs = ['src', 'vars'] 
+    }
+  }
+
+  test {
+    groovy {
+      srcDir 'test'
+    }
+  }
+}
+```
+
+
+I fiddled with that, made some progress, but was still getting into dependency hell with the libraries. After a few iterations I landed on this, which combined the info from both walkthroughs:
+
+```gradle
+repositories {
+  jcenter()
+    maven {
+     url 'http://repository.apache.org/snapshots/'
+     url 'https://repo.jenkins-ci.org/releases/'
+  }
+}
+```
+
+See [build.gradle](build.gradle) for the final file contents.
+
+At last, a working build:
+
+```gradle
+> ./gradlew test
+
+ Task :test
+ToAlphanumericTest: testCall: SUCCESS
+Tests: 1, Failures: 0, Errors: 0, Skipped: 0
+
+BUILD SUCCESSFUL in 5s
+4 actionable tasks: 2 executed, 2 up-to-date
+```
+
+**I'll be honest - I don't really understand the java specifics as deeply as I'd like to. But, it's compiling, it's testing, it's writing output - this is a huge step forward.**
+
+
+# Going Deeper
+
+Let's set up some failing tests:
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+[1]: https://medium.com/disney-streaming/testing-jenkins-shared-libraries-4d4939406fa2
+[2]: https://dev.to/kuperadrian/how-to-setup-a-unit-testable-jenkins-shared-pipeline-library-2e62
