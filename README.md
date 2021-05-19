@@ -37,7 +37,7 @@ These steps are required to add the new Zscaler root CA cert to the Java keystor
 
 1. Grab the Root ZScaler cert from a browser.
 
-2. Execute these commands:
+2. Execute these commands in PowerShell:
 
    ```powershell
    $caargs = @('-importcert',
@@ -212,12 +212,50 @@ BUILD SUCCESSFUL in 5s
 
 See [build.gradle](build.gradle) for the complete file.
 
+## Mocking
+
+Other than executing the code under test, Mocking is the most important part of unit testing. It lets you stub out external or unneeded parts of the code and focus on the logic you want to make sure is working.
+
+This also wasn't working out of the box from the tutorial. The mock doesn't seem to be working, as the call to `pwsh` is still looking for a file `Get-Repo.ps1`:
+
+```groovy
+void testCall() {
+  // set up mocks
+  def reponame = 'myRepoName'
+  helper.registerAllowedMethod("pwsh", [Map.class], { reponame })
+
+  // call getRepo and check result
+  def result = getRepo()
+  assert 'myRepoName'.equals(result)
+}
+```
+
+```shell
+> gw
+
+> Task :test
+GetRepoTest: testCall: FAILURE
+> There were failing tests. See the report at: file:///C:/Users/mcascone1/Documents/github/test-jenk-unit/build/reports/tests/test/index.html
+```
+
+in the report:
+
+```shell
+groovy.lang.GroovyRuntimeException: Library Resource not found with path Get-Repo.ps1
+```
+
+
 
 # Appendix
 
 1. The build/test results are output to a file: `path/to/repo/build/reports/tests/test/index.html`
 2. [These old-school `assert` options might come in handy.][7]
+3. Pro Tip: To run a single test class, or even a single test, run Gradle with the `--tests` option:
 
+   ```shell
+   ./gradlew test --tests GetRepoTest
+   ./gradlew test --tests GetRepoTest.testCall
+   ```
 
 
 
