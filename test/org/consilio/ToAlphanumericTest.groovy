@@ -16,6 +16,7 @@ class ToAlphanumericTest extends BasePipelineTest {
     void testCall() {
         // call toAlphanumeric and check result
         def result = toAlphanumeric(text: "a_B-c.1")
-        assertEquals "result:", "abc1", result
+        // assertEquals "result:", "abc1", result
+        assert 'abc1' == result
     }
 }
