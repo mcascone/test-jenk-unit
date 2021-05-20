@@ -10,7 +10,7 @@ class GetRepoTest extends BasePipelineTest {
     super.setUp()
     // set up mocks
     def reponame = 'myRepoName'
-    helper.registerAllowedMethod("pwsh", [], { p -> return reponame })
+    helper.registerAllowedMethod("pwsh", [Boolean, String, String], { p -> return reponame })
 
     // load getRepo
     getRepo = loadScript("vars/getRepo.groovy")

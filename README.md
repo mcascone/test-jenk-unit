@@ -5,7 +5,7 @@ This is the simplest of hello-world repos to get off the ground, and I ~~can’t
 ## References
 
 - Based off [this tutorial][1]
-- [Jenkins Pipeline Unit on GitHub][4] and a [shot in the dark question to them][5]
+- [Jenkins Pipeline Unit on GitHub][4] and a [to them about all of this.][5]
 
 
 ## Starting Point
@@ -257,6 +257,7 @@ groovy.lang.GroovyRuntimeException: Library Resource not found with path Get-Rep
    ./gradlew test --tests GetRepoTest.testCall
    ```
 
+4. I should probably move to [the Spock framework][9] ASAP. I don't think JPU and Spock are mutually-exclusive.
 
 
 [1]: https://medium.com/disney-streaming/testing-jenkins-shared-libraries-4d4939406fa2
@@ -267,3 +268,4 @@ groovy.lang.GroovyRuntimeException: Library Resource not found with path Get-Rep
 [6]: https://en.wikipedia.org/wiki/Dependency_hell
 [7]: https://docs.groovy-lang.org/2.4.7/html/gapi/groovy/util/GroovyTestCase.html
 [8]: https://docs.microsoft.com/en-us/powershell/module/microsoft.powershell.core/about/about_splatting?view=powershell-7.1
+[9]: https://spockframework.org/
