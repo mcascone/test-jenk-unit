@@ -29,7 +29,7 @@ nd valid certification path to requested target
 I get this even when off the VPN. So I figure my java cert chain is out of date. What’s the best way to fix it?
 
 # The Answer*
-`*` to the SSL issue, at least
+`*` to the SSL issue only, thank you drive through
 
 I get the error when off VPN because the corporate Zscaler grabs _all_ traffic from our laptops, regardless of VPN status. IT pushes certs to our Windows cert store in the background, but we're on our own for non-standard runtimes.
 
@@ -244,7 +244,7 @@ in the report:
 groovy.lang.GroovyRuntimeException: Library Resource not found with path Get-Repo.ps1
 ```
 
-
+I opened [this question on StackOverflow][10]. This is where I'm stuck right now.
 
 # Appendix
 
@@ -269,3 +269,4 @@ groovy.lang.GroovyRuntimeException: Library Resource not found with path Get-Rep
 [7]: https://docs.groovy-lang.org/2.4.7/html/gapi/groovy/util/GroovyTestCase.html
 [8]: https://docs.microsoft.com/en-us/powershell/module/microsoft.powershell.core/about/about_splatting?view=powershell-7.1
 [9]: https://spockframework.org/
+[10]: https://stackoverflow.com/q/67613500/556078
